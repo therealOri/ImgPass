@@ -1,7 +1,7 @@
 # ImgPass
 A proof of concept involving using images or files as a "password" to login or register. No more needing to remmber long and complicated passwords. all you need and an image or a file. 
 
-For an image it can be anything you take with your camera. **THAT ISN'T POSTED TO THE INTERNET**. Basically DON'T use public images from the interent. Alternatively, you can digitally alter the image and change the pixels and then voilà, the image will have its own unique hash value that doesn't match any other image on the interent. 
+For an image it can be anything you take with your camera. **THAT ISN'T POSTED TO THE INTERNET**. Basically DON'T use public images from the internet. Alternatively, you can digitally alter the image and change the pixels and then voilà, the image will have its own unique hash value that doesn't match any other image on the interent. 
 
 Same can go for files, write whatever you want in said file, have the files name be whatever, etc. It will have a unique hash value that doesn't match anything else. I would personally use a pgp/gpg key file/signature. But anything will be fine.
 __ __
