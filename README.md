@@ -10,7 +10,7 @@ __ __
 <br />
 
 # About
-ImgPass allows you to drag and drop and image or file into the terminal window to then be turned into a blake2b hash value. That hash value then gets encrypted and stored away into a sqlite3 database (along with an email). I have added ways to make it seem more "realistic" to how you would login or register an account.
+ImgPass allows you to drag and drop an image or file into the terminal window to then be turned into a blake2b hash value. That hash value then gets encrypted and stored away into a sqlite3 database (along with an email). I have added ways to make it seem more "realistic" to how you would login or register an account.
 
 You will be asked some questions, you can store or write down what you use. Perhaps in a password manager that allows you to make notes. Regardless, it's up to you to decide how you store your information.
 
