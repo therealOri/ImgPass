@@ -10,7 +10,7 @@ def clear():
 
 
 def banner():
-    banner = """
+    return """
     ██╗███╗   ███╗ ██████╗ ██████╗  █████╗ ███████╗███████╗
     ██║████╗ ████║██╔════╝ ██╔══██╗██╔══██╗██╔════╝██╔════╝
     ██║██╔████╔██║██║  ███╗██████╔╝███████║███████╗███████╗
@@ -20,24 +20,20 @@ def banner():
 
             Made By https://github.com/therealOri
     """
-    return banner
 
 
 
 def img_to_hash(img):
     isFile = os.path.isfile(img)
-    BUF_SIZE = 65536
     if isFile == True:
+        BUF_SIZE = 65536
         with open(img, 'rb') as fh:
             while True:
                 data = fh.read(BUF_SIZE)
-                if not data:
-                    break
-                elif data == '':
+                if not data or data == '':
                     break
                 else:
-                    nhash = hsh.blake2b(data, digest_size=32).hexdigest()
-                    return nhash
+                    return hsh.blake2b(data, digest_size=32).hexdigest()
         raise Exception("There is no data to hash...[Empty File]") from None
     else:
         ithE = "File that was provided does not exist or isn't a file.."
@@ -52,15 +48,11 @@ def verify_hash(email, img, key, key_salt, enc_salt):
     database = sqlite3.connect('accounts.hshes')
     c = database.cursor()
     c.execute(f"SELECT hash FROM logins WHERE email LIKE '{email}'")
-    h = c.fetchone()[0]
-    if not h:
-        raise Exception("Oof..nothing here but us foxos...") from None
-    else:
+    if h := c.fetchone()[0]:
         enc_hash = oCrypt().string_decrypt(key, key_salt, h, enc_salt)
-        if enc_hash == img_result:
-            return True
-        else:
-            return False
+        return enc_hash == img_result
+    else:
+        raise Exception("Oof..nothing here but us foxos...") from None
 
 
 
@@ -89,8 +81,8 @@ def main():
             clear()
             continue
 
+        clear()
         if options == 1:
-            clear()
             img = input(f'{COLORS["cyan"]}Please drag and drop the file/image you want to use into the terminal window.\nThen press "enter" to continue...{COLORS["end"]}\n\n{COLORS["red"]}').replace('\\ ', ' ').strip()
             clear()
             result = img_to_hash(img)
@@ -98,14 +90,13 @@ def main():
             input(f'{COLORS["cyan"]}Press "Enter" to continue...{COLORS["end"]}')
             clear()
         elif options == 2:
-            clear()
             email = input(f'{COLORS["green"]}Please enter your email address:\nEmail: {COLORS["red"]}')
             print(f'{COLORS["end"]}')
             clear()
             img = input(f'{COLORS["cyan"]}Please drag and drop the file/image you want to use into the terminal window.\nThen press "enter" to continue...{COLORS["end"]}\n\n{COLORS["red"]}').replace('\\ ', ' ').strip()
             print(f'{COLORS["end"]}')
             clear()
-            
+
 
             key = input(f'{COLORS["green"]}Please provide a key for hashing: {COLORS["end"]}{COLORS["red"]}')
             print(f'{COLORS["end"]}')
@@ -121,9 +112,8 @@ def main():
             print(f'{COLORS["green"]}Values added to the database successfully!{COLORS["end"]}\n\n')
             input(f'{COLORS["cyan"]}Press "Enter" to continue...{COLORS["end"]}')
             clear()
-            
+
         elif options == 3:
-            clear()
             email = input(f'{COLORS["green"]}Please enter your email address:\nEmail: {COLORS["red"]}')
             print(f'{COLORS["end"]}')
             clear()
@@ -145,16 +135,13 @@ def main():
             if verify_hash(email, img, key, key_salt, enc_salt) == True:
                 print(f"{COLORS['green']}Welcome user! You have now logged in!{COLORS['end']}\n\n")
                 input(f'{COLORS["cyan"]}Press "Enter" to continue...{COLORS["end"]}')
-                clear()
             else:
                 print(f"{COLORS['red']}Error: Incorrect login credentials has been given..try again.{COLORS['end']}\n\n")
                 input(f'{COLORS["green"]}Press "Enter" to continue...{COLORS["end"]}')
-                clear()
-        elif options == 4:
             clear()
+        elif options == 4:
             quit()
         else:
-            clear()
             print(f'{COLORS["red"]}That is not a valid menu option...{COLORS["end"]}\n\n')
             input(f'{COLORS["green"]}Press "Enter" to continue...{COLORS["end"]}')
             clear()
