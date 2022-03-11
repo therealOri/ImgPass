@@ -53,7 +53,6 @@ def verify_hash(email, img, key, key_salt, enc_salt):
         enc_hash = oCrypt().string_decrypt(key, key_salt, dh, enc_salt)
         return enc_hash == img_result
     else:
-        print(h)
         raise Exception("Oof..nothing here but us foxos...") from None
 
 
