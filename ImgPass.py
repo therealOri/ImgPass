@@ -48,10 +48,12 @@ def verify_hash(email, img, key, key_salt, enc_salt):
     database = sqlite3.connect('accounts.hshes')
     c = database.cursor()
     c.execute(f"SELECT hash FROM logins WHERE email LIKE '{email}'")
-    if h := c.fetchone()[0]:
-        enc_hash = oCrypt().string_decrypt(key, key_salt, h, enc_salt)
+    if h := c.fetchone():
+        dh = h[0]
+        enc_hash = oCrypt().string_decrypt(key, key_salt, dh, enc_salt)
         return enc_hash == img_result
     else:
+        print(h)
         raise Exception("Oof..nothing here but us foxos...") from None
 
 
