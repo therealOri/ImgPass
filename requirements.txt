@@ -2,7 +2,7 @@ bcrypt==3.2.0
 cffi==1.15.0
 cryptography==36.0.1
 oCrypt0r==1.0.7.post1
-paramiko==2.9.2
+paramiko==2.10.1
 pycparser==2.21
 pycryptodome==3.14.1
 PyNaCl==1.5.0
