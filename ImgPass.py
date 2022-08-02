@@ -42,22 +42,23 @@ def img_to_hash(img):
 
 
 
-def verify_hash(email, img, key, key_salt, enc_salt):
+def verify_hash(email, img, enc_key, enc_salt):
     img_result = img_to_hash(img)
 
     database = sqlite3.connect('accounts.hshes')
     c = database.cursor()
     c.execute(f"SELECT hash FROM logins WHERE email LIKE '{email}'")
     if h := c.fetchone():
-        enc_hash = oCrypt().string_decrypt(key, key_salt, h[0], enc_salt)
+        enc_hash = oCrypt().string_decrypt(h[0], enc_key, enc_salt)
         return enc_hash == img_result
     else:
-        raise Exception("Oof..nothing here but us foxos...") from None
+        msg = "No account with the provided email exists."
+        raise ValueError(msg) from None
 
 
 
-def add_db(email, img_hash, key, key_salt, enc_salt):
-    enc_hash = oCrypt().string_encrypt(key, key_salt, img_hash, enc_salt)
+def add_db(email, img_hash, enc_key, enc_salt):
+    enc_hash = oCrypt().string_encrypt(img_hash, enc_key, enc_salt)
     database = sqlite3.connect('accounts.hshes')
     c = database.cursor()
 
@@ -98,17 +99,14 @@ def main():
             clear()
 
 
-            key = input(f'{COLORS["green"]}Please provide a key for hashing: {COLORS["end"]}{COLORS["red"]}')
-            print(f'{COLORS["end"]}')
-
-            key_salt = input(f'{COLORS["green"]}Please provide a salt for the hasing key: {COLORS["end"]}{COLORS["red"]}')
+            enc_key = input(f'{COLORS["green"]}Please provide a key for the encryption: {COLORS["end"]}{COLORS["red"]}')
             print(f'{COLORS["end"]}')
 
             enc_salt = input(f'{COLORS["green"]}Please provide a salt for the encryption: {COLORS["end"]}{COLORS["red"]}')
             print(f'{COLORS["end"]}')
             clear()
             result = img_to_hash(img)
-            add_db(email, result, key, key_salt, enc_salt)
+            add_db(email, result, enc_key, enc_salt)
             print(f'{COLORS["green"]}Values added to the database successfully!{COLORS["end"]}\n\n')
             input(f'{COLORS["cyan"]}Press "Enter" to continue...{COLORS["end"]}')
             clear()
@@ -121,10 +119,7 @@ def main():
             print(f'{COLORS["end"]}')
             clear()
 
-            key = input(f'{COLORS["green"]}Please provide a key for hashing: {COLORS["end"]}{COLORS["red"]}')
-            print(f'{COLORS["end"]}')
-
-            key_salt = input(f'{COLORS["green"]}Please provide a salt for the hasing key: {COLORS["end"]}{COLORS["red"]}')
+            enc_key = input(f'{COLORS["green"]}Please provide a key for the encryption: {COLORS["end"]}{COLORS["red"]}')
             print(f'{COLORS["end"]}')
 
             enc_salt = input(f'{COLORS["green"]}Please provide a salt for the encryption: {COLORS["end"]}{COLORS["red"]}').replace('\\ ', ' ').strip()
@@ -132,11 +127,11 @@ def main():
             clear()
 
 
-            if verify_hash(email, img, key, key_salt, enc_salt) == True:
+            if verify_hash(email, img, enc_key, enc_salt) == True:
                 print(f"{COLORS['green']}Welcome user! You have now logged in!{COLORS['end']}\n\n")
                 input(f'{COLORS["cyan"]}Press "Enter" to continue...{COLORS["end"]}')
             else:
-                print(f"{COLORS['red']}Error: Incorrect login credentials has been given..try again.{COLORS['end']}\n\n")
+                print(f"{COLORS['red']}Error: Incorrect login credentials have been given..please try again.{COLORS['end']}\n\n")
                 input(f'{COLORS["green"]}Press "Enter" to continue...{COLORS["end"]}')
             clear()
         elif options == 4:
