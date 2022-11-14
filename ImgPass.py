@@ -52,7 +52,6 @@ def keygen(master):
 
 # Encrypting the passwords with master key and AES encryption.
 def stringME(data, key):
-    #data = bytes(data, 'utf-8')
     cipher = AES.new(key, AES.MODE_GCM)
     cipher.update(header)
     ciphertext, tag = cipher.encrypt_and_digest(data)
