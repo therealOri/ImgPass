@@ -1,5 +1,5 @@
 # ImgPass
-A proof of concept involving using images or files as a "password" to login or register. No more needing to remmber long and complicated passwords. all you need is an image or a file. 
+A proof of concept involving using images or files as a "password" to login or register. No more needing to remember long and complicated passwords. all you need is an image or a file.
 
 For an image it can be anything you take with your camera. **THAT ISN'T POSTED TO THE INTERNET**. Basically DON'T use public images from the internet. Alternatively, you can digitally alter the image and change the pixels and then voilà, the image will have its own unique hash value that doesn't match any other image on the interent. 
 
@@ -14,10 +14,17 @@ ImgPass allows you to drag and drop an image or file into the terminal window to
 
 You will be asked some questions, you can store or write down what you use. Perhaps in a password manager that allows you to make notes. Regardless, it's up to you to decide how you store your information.
 
+Basically the same way you'd take the data of a password/string of text and hash it and then encrypt and store it is being done with an image instead. We take the data/bytes of the image or file, hash that instead and then encrypt and store. We then would have some way to compare and verify the hashes made and stored. (whatever method you so choose) and go from there.
+__ __
+
 <br />
 <br />
 
-![image](https://user-images.githubusercontent.com/45724082/157733323-8ed98e8e-382f-443d-b696-79cb6de42054.png)
+![main_menu](https://user-images.githubusercontent.com/45724082/201742745-1fb448b1-3d97-44ab-acd2-920ad84dda77.png)
+
+Links & Resources
+* [Genter](https://github.com/therealOri/Genter)
+> For password generation to be used in Keys for the encryption.
 __ __
 
 <br />
