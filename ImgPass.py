@@ -4,81 +4,11 @@ import sys
 import base64 as b64
 import sqlite3
 import json
-from alive_progress import alive_bar
 import beaupy
-
-
-#AES stoof
-from Crypto.Cipher import AES
-from Crypto.Random import random
+import gcm
 
 
 
-#KeyGen
-from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
-
-
-
-
-#The header that's used with the aes encryption for the json object is not encrypted, just base64 encoded and I don't really know of its importance.
-header = f"Encrypted using ImgPass. DO NOT TAMPER WITH.  |  Made by therealOri  |  {os.urandom(8)}"
-header = bytes(header, 'utf-8')
-
-
-
-
-
-#Make master key for encrypting stuff.
-def keygen(master):
-    salt = os.urandom(16)
-
-    # derive
-    print("Generating key...")
-    with alive_bar(0) as bar:
-        Scr = Scrypt(
-            salt=salt,
-            length=32,
-            n=2**20,
-            r=16,
-            p=1,
-        )
-        key = Scr.derive(master)
-        bar()
-    clear()
-    bkey = b64.b64encode(key) #Base64 encode the bytes. (We decode this before encrypting, using bytes instead of the base64 encoded string.)
-    return bkey.decode()
-
-
-
-# Encrypting the passwords with master key and AES encryption.
-def stringME(data, key):
-    cipher = AES.new(key, AES.MODE_GCM)
-    cipher.update(header)
-    ciphertext, tag = cipher.encrypt_and_digest(data)
-    json_k = [ 'nonce', 'header', 'ciphertext', 'tag' ]
-    json_v = [ b64.b64encode(x).decode('utf-8') for x in [cipher.nonce, header, ciphertext, tag ]]
-    result = json.dumps(dict(zip(json_k, json_v)))
-    result = bytes(result, 'utf-8')
-    result = b64.b64encode(result)
-    return result.decode()
-
-
-#Decrypting the passwords with master key and AES encryption.
-def stringMD(b64_input, key):
-    try:
-        json_input = b64.b64decode(b64_input)
-        b64j = json.loads(json_input)
-        json_k = [ 'nonce', 'header', 'ciphertext', 'tag' ]
-        jv = {k:b64.b64decode(b64j[k]) for k in json_k}
-
-        cipher = AES.new(key, AES.MODE_GCM, nonce=jv['nonce'])
-        cipher.update(jv['header'])
-        plaintext = cipher.decrypt_and_verify(jv['ciphertext'], jv['tag'])
-        return plaintext.decode()
-    except (ValueError, KeyError):
-        input("Incorrect data given, or Data has been tampered with. Can't decrypt.\n\nPress 'enter' to continue...")
-        clear()
-        return None
 
 
 
@@ -127,7 +57,7 @@ def verify_hash(email, img, enc_key):
     c = database.cursor()
     c.execute(f"SELECT hash FROM logins WHERE email LIKE '{email}'")
     if h := c.fetchone():
-        enc_hash = stringMD(h[0], enc_key)
+        enc_hash = gcm.stringD(dcr_data=h[0], key=enc_key)
         return enc_hash == img_result
     else:
         clear()
@@ -137,7 +67,7 @@ def verify_hash(email, img, enc_key):
 
 
 def add_db(email, img_hash, enc_key):
-    enc_hash = stringME(img_hash, enc_key)
+    enc_hash = gcm.stringE(enc_data=img_hash, key=enc_key)
     database = sqlite3.connect('accounts.hshes')
     c = database.cursor()
 
@@ -168,8 +98,12 @@ def main():
                 clear()
             else:
                 m_gen = bytes(m_gen, 'unicode-escape')
-                m_key = keygen(m_gen)
-                print(f'If you have made this key to encrypt your data...DO NOT LOSE THIS KEY. If you lose this key, you can not recover your passwords or change encrypted data.\nThis key will be used when encrypting & decrypting passwords.\n\n\nKey: {m_key}\n\n')
+                m_key = gcm.keygen(m_gen)
+                if not m_key:
+                    clear()
+                    continue
+                b64_mKey = b64.b64encode(m_key)
+                print(f'If you have made this key to encrypt your data...DO NOT LOSE THIS KEY. If you lose this key, you can not recover your passwords or change encrypted data.\nThis key will be used when encrypting & decrypting passwords.\n\n\nKey: {b64_mKey.decode()}\n\n')
                 input('Press "enter" to continue...')
                 clear()
 
